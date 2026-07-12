@@ -25,7 +25,7 @@ function signUp() {
             showMessage("회원가입 실패: " + err.message);
             return;
         }
-        showMessage("회원가입이 완료되었습니다. 로그인해 주십시오.");
+        showMessage("회원가입이 완료되었습니다. 이메일로 전송된 인증 코드를 입력해 주세요.");
     });
 }
 
@@ -55,5 +55,35 @@ function login() {
         onFailure: function(err) {
             showMessage("로그인 실패: " + err.message);
         }
+    });
+}
+
+function confirmSignUp() {
+    const email = document.getElementById('emailInput').value.trim();
+    const code = document.getElementById('codeInput').value.trim();
+
+    if (!email || !code) {
+        showMessage("이메일과 인증 코드를 모두 입력해 주세요.");
+        return;
+    }
+
+    const cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+        Username: email,
+        Pool: userPool
+    });
+
+    showMessage("이메일 인증을 진행 중입니다...");
+
+    cognitoUser.confirmRegistration(code, true, function(err, result) {
+        if (err) {
+            showMessage("인증 실패: " + err.message);
+            return;
+        }
+
+        showMessage("이메일 인증이 완료되었습니다. 로그인해 주세요.");
+
+        setTimeout(() => {
+            window.location.href = "index.html";
+        }, 1000);
     });
 }
