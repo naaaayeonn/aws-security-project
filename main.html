@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>메인 시스템</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/amazon-cognito-identity-js@3.2.0/dist/amazon-cognito-identity.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2 id="userGreeting">로딩 중...</h2>
+        <p id="roleMessage" style="font-weight: bold; color: #555;"></p>
+        
+        <div id="uploadArea">
+            <p>S3 파일 업로드 구역 (개발 예정)</p>
+            <input type="file">
+            <button style="background-color: #28a745;">업로드</button>
+        </div>
+        <br>
+        <button onclick="logout()" style="background-color: #6c757d;">로그아웃</button>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

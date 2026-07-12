@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>시스템 회원가입</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/amazon-cognito-identity-js@3.2.0/dist/amazon-cognito-identity.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>회원가입</h2>
+        <input type="email" id="emailInput" placeholder="가입할 이메일">
+        <input type="password" id="passwordInput" placeholder="비밀번호">
+        <br>
+        <button onclick="signUp()" style="width: 100%; margin-top: 10px; background-color: #28a745;">가입하기</button>
+        
+        <div style="margin-top: 15px; font-size: 14px; color: #666;">
+            이미 계정이 있으신가요? <a href="index.html" style="color: #007bff; text-decoration: none; font-weight: bold;">로그인 창으로 돌아가기</a>
+        </div>
+        
+        <p id="message" style="color: #d9534f; font-weight: bold; font-size: 14px;"></p>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>
