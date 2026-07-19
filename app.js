@@ -42,3 +42,16 @@ function logout() {
     alert("로그아웃 되었습니다.");
     window.location.href = "index.html";
 }
+
+// ====== [UI 테스트용 가짜 로직 추가(로그인이 안되는 상황이라 일단 바로 메인페이지 접속할수 있게 코드 추가함] ======
+// AWS 연결 없이 무조건 관리자(Admin)인 것처럼 화면을 세팅
+
+// document.getElementById('userGreeting').innerText = "테스트 계정 님 환영합니다!";
+// document.getElementById('roleMessage').innerText = "👑 현재 권한: 관리자(Admin) - 파일 업로드 가능";
+// document.getElementById('uploadArea').style.display = 'block'; // S3 드래그 앤 드롭 창 보이기
+
+// function logout() {
+   // alert("로그아웃 되었습니다. (테스트)");
+   // window.location.href = "index.html";
+}
+// ==========================================
