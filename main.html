@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <title>메인 시스템</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Cognito 인증 라이브러리 -->
     <script src="https://unpkg.com/amazon-cognito-identity-js@3.2.0/dist/amazon-cognito-identity.min.js"></script>
+    
+    <!-- AWS S3 통신 라이브러리 (진짜 업로드용) -->
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1433.0.min.js"></script>
+    
     <style>
         /* main_2.html 전용 추가 스타일 */
         .dashboard-header {
@@ -48,7 +54,86 @@
         <button onclick="logout()" style="width: 100%; background-color: #6c757d;">로그아웃</button>
     </div>
 
+    <!-- 설정 파일과 권한 제어 스크립트 불러오기 -->
     <script src="config.js"></script>
     <script src="app.js"></script>
+
+    <!-- 실제 S3 업로드 통신 스크립트 -->
+    <script>
+        const dropZone = document.querySelector('.drop-zone');
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.querySelector('#uploadArea button');
+
+        const S3_BUCKET_NAME = 'security-project-nayeon-2026'; 
+        const S3_REGION = 'ap-southeast-2'; 
+        //자격 증명 풀 ID
+        const IDENTITY_POOL_ID = 'ap-southeast-2:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'; // 나중에 발급받으면 
+        // 1. 파일이 선택되면 화면에 이름 띄우기
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                dropZone.querySelector('p').innerText = `✅ 선택됨: ${fileInput.files[0].name}`;
+            }
+        });
+
+        // 2. 진짜 S3 업로드 로직 실행!
+        uploadBtn.addEventListener('click', function() {
+            if (fileInput.files.length === 0) {
+                alert("먼저 파일을 선택해 주세요!");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const fileName = file.name;
+
+            // 버튼 상태 변경
+            uploadBtn.innerText = "🚀 AWS S3로 실제 업로드 중...";
+            uploadBtn.style.backgroundColor = "#ffc107";
+            uploadBtn.style.color = "black";
+            uploadBtn.disabled = true;
+
+            // --- AWS S3 객체 생성 및 업로드 설정 ---
+            const s3 = new AWS.S3({
+                apiVersion: '2006-03-01',
+                params: { Bucket: S3_BUCKET_NAME }
+            });
+
+            const uploadParams = {
+                Key: "uploads/" + fileName, // S3 내의 uploads 폴더에 저장
+                Body: file,
+                ContentType: file.type
+            };
+
+            // S3로 파일 전송 
+            s3.upload(uploadParams, function(err, data) {
+                if (err) {
+                    console.error("업로드 에러 상세정보:", err);
+                    alert("업로드 실패: " + err.message);
+                    
+                    // 실패 시 버튼 원상복구
+                    uploadBtn.innerText = "S3에 업로드";
+                    uploadBtn.style.backgroundColor = "#28a745";
+                    uploadBtn.style.color = "white";
+                    uploadBtn.disabled = false;
+                    return;
+                }
+                
+                // 성공했을 때
+                alert("🎉 S3 업로드 완벽하게 성공!\n파일 주소: " + data.Location);
+                
+                uploadBtn.innerText = "✅ S3 업로드 완료!";
+                uploadBtn.style.backgroundColor = "#007bff";
+                uploadBtn.style.color = "white";
+                
+                // 3초 뒤에 버튼 다시 원래대로 되돌리기
+                setTimeout(() => {
+                    uploadBtn.innerText = "S3에 업로드";
+                    uploadBtn.style.backgroundColor = "#28a745";
+                    uploadBtn.disabled = false;
+                    fileInput.value = ""; // 선택된 파일 초기화
+                    dropZone.querySelector('p').innerText = "📂 이곳을 클릭하거나 파일을 드래그 하세요";
+                }, 3000);
+            });
+        });
+    </script>
 </body>
 </html>
